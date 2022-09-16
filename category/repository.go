@@ -1,15 +1,17 @@
 package category
 
 import (
+	"learning/todo/helper"
+
 	"gorm.io/gorm"
 )
 
 type Repository interface {
-	FindAll(req CategoryPaginationRequest) ([]Category, error)
+	FindAll(req helper.PaginationRequest) ([]Category, error)
 	FindByID(ID string) (Category, error)
 	Save(category Category) (Category, error)
 	Update(category Category) (Category, error)
-	Delete(ID string) (Category, error)
+	Delete(ID string) (bool, error)
 }
 
 type repository struct {
@@ -20,7 +22,7 @@ func NewCategoryRepository(db *gorm.DB) Repository {
 	return &repository{db: db}
 }
 
-func (r *repository) FindAll(req CategoryPaginationRequest) ([]Category, error) {
+func (r *repository) FindAll(req helper.PaginationRequest) ([]Category, error) {
 	var category []Category
 	orm := r.db.Model(Category{})
 
@@ -73,14 +75,14 @@ func (r *repository) Update(category Category) (Category, error) {
 	return category, nil
 }
 
-func (r *repository) Delete(ID string) (Category, error) {
+func (r *repository) Delete(ID string) (bool, error) {
 	var category Category
 
-	err := r.db.Delete(&category, ID).Error
+	err := r.db.Delete(&category, "id = ?", ID).Error
 
 	if err != nil {
-		return category, err
+		return false, err
 	}
 
-	return category, nil
+	return true, nil
 }

@@ -19,7 +19,7 @@ func NewHandlerCategory(db *gorm.DB) *categoryHandler {
 }
 
 func (h *categoryHandler) GetCategory(c *gin.Context) {
-	var request category.CategoryPaginationRequest
+	var request helper.PaginationRequest
 
 	err := c.Bind(&request)
 
@@ -53,7 +53,6 @@ func (h *categoryHandler) GetCategoryByID(c *gin.Context) {
 	}
 
 	categoryDetail, err := h.service.FindByID(input)
-
 	if err != nil {
 		response := helper.APIResponse("Failed get detail category", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
@@ -125,18 +124,18 @@ func (h *categoryHandler) UpdateCategory(c *gin.Context) {
 }
 
 func (h *categoryHandler) DeleteCategory(c *gin.Context) {
-	var inputID category.GetCategoryID
+	var input category.GetCategoryID
 
-	err := c.ShouldBindUri(inputID)
+	err := c.ShouldBindUri(&input)
 	if err != nil {
-		response := helper.APIResponse("Failed delete category", http.StatusBadRequest, "error", nil)
+		response := helper.APIResponse("Failed get detail category", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	updateCategory, err := h.service.Delete(inputID)
+	deleteCategory, err := h.service.Delete(input)
 
-	response := helper.APIResponse("Success delete category", http.StatusOK, "success", updateCategory)
+	response := helper.APIResponse("Success get delete category", http.StatusOK, "success", deleteCategory)
 	c.JSON(http.StatusOK, response)
 	return
 }

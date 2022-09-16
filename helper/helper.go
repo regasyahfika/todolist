@@ -29,3 +29,9 @@ func FormatValidationError(err error) []string {
 
 	return errors
 }
+
+type PaginationRequest struct {
+	Search *string `form:"search"`
+	Page   int     `form:"page"`
+	Limit  int     `form:"limit"`
+}

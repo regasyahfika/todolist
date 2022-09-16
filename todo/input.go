@@ -3,15 +3,21 @@ package todo
 import (
 	"learning/todo/category"
 	"time"
+
+	"gorm.io/gorm"
 )
 
-type TodoInput struct {
-	ID          string    `json:"id"`
-	CategoryID  string    `json:"category_id" gorm:"index" validate:"required"`
-	Name        int       `json:"name" validate:"required"`
-	Description int       `json:"description"`
-	CreatedAt   time.Time `json:"created_at" gorm:"not null"`
-	UpdatedAt   time.Time `json:"updated_at" gorm:"not null"`
-	// DeletedAt   *time.Time `json:"deleted_at,omitempty" gorm:"null"`
-	Category category.Category
+type Todo struct {
+	ID          string             `json:"id" gorm:"primaryKey"`
+	CategoryID  string             `json:"category_id" gorm:"index" binding:"required"`
+	Name        string             `json:"name" binding:"required"`
+	Description string             `json:"description" binding:"required"`
+	CreatedAt   time.Time          `json:"created_at" gorm:"not null"`
+	UpdatedAt   time.Time          `json:"updated_at" gorm:"not null"`
+	DeletedAt   *gorm.DeletedAt    `json:"deleted_at,omitempty" gorm:"null"`
+	Category    *category.Category `json:"category,omitempty" gorm:"null"`
+}
+
+type GetTodoID struct {
+	ID string `uri:"id" binding:"required"`
 }

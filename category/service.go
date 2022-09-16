@@ -2,6 +2,7 @@ package category
 
 import (
 	"errors"
+	"learning/todo/helper"
 
 	"github.com/calasteo/uuid"
 	"github.com/gosimple/slug"
@@ -9,11 +10,11 @@ import (
 )
 
 type Service interface {
-	FindAll(req CategoryPaginationRequest) ([]Category, error)
+	FindAll(req helper.PaginationRequest) ([]Category, error)
 	FindByID(inputID GetCategoryID) (Category, error)
 	Save(category Category) (Category, error)
 	Update(inputID GetCategoryID, inputCategory Category) (Category, error)
-	Delete(inputID GetCategoryID) (Category, error)
+	Delete(inputID GetCategoryID) (bool, error)
 }
 
 type service struct {
@@ -25,7 +26,7 @@ func NewCategoryService(db *gorm.DB) Service {
 	return &service{repo: repo}
 }
 
-func (s *service) FindAll(req CategoryPaginationRequest) ([]Category, error) {
+func (s *service) FindAll(req helper.PaginationRequest) ([]Category, error) {
 	return s.repo.FindAll(req)
 }
 
@@ -56,15 +57,15 @@ func (s *service) Save(category Category) (Category, error) {
 	return s.repo.Save(category)
 }
 
-func (s *service) Delete(inputID GetCategoryID) (Category, error) {
+func (s *service) Delete(inputID GetCategoryID) (bool, error) {
 	category, err := s.repo.FindByID(inputID.ID)
 
 	if err != nil {
-		return category, err
+		return false, err
 	}
 
 	if category.ID != inputID.ID {
-		return category, errors.New("Salah ID")
+		return false, errors.New("Salah ID")
 	}
 
 	return s.repo.Delete(category.ID)

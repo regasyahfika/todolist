@@ -8,6 +8,7 @@ import (
 func Routes(g *gin.Engine, db *gorm.DB) {
 	api := g.Group("/api")
 	RouteCategory(api, db)
+	RouteTodo(api, db)
 
 	return
 }
