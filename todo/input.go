@@ -4,6 +4,7 @@ import (
 	"learning/todo/category"
 	"time"
 
+	"github.com/calasteo/uuid"
 	"gorm.io/gorm"
 )
 
@@ -20,4 +21,9 @@ type Todo struct {
 
 type GetTodoID struct {
 	ID string `uri:"id" binding:"required"`
+}
+
+func (c *Todo) BeforeCreate(tx *gorm.DB) (err error) {
+	c.ID = uuid.GenerateOrderedUUID()
+	return
 }

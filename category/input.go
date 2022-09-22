@@ -3,6 +3,7 @@ package category
 import (
 	"time"
 
+	"github.com/calasteo/uuid"
 	"gorm.io/gorm"
 )
 
@@ -26,4 +27,9 @@ type CategoryInput struct {
 
 type GetCategoryID struct {
 	ID string `uri:"id" binding:"required"`
+}
+
+func (c *Category) BeforeCreate(tx *gorm.DB) (err error) {
+	c.ID = uuid.GenerateOrderedUUID()
+	return
 }

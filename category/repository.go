@@ -11,7 +11,7 @@ type Repository interface {
 	FindByID(ID string) (Category, error)
 	Save(category Category) (Category, error)
 	Update(category Category) (Category, error)
-	Delete(ID string) (bool, error)
+	Delete(ID string) (error, error)
 }
 
 type repository struct {
@@ -75,14 +75,14 @@ func (r *repository) Update(category Category) (Category, error) {
 	return category, nil
 }
 
-func (r *repository) Delete(ID string) (bool, error) {
+func (r *repository) Delete(ID string) (error, error) {
 	var category Category
 
 	err := r.db.Delete(&category, "id = ?", ID).Error
 
 	if err != nil {
-		return false, err
+		return err, err
 	}
 
-	return true, nil
+	return err, nil
 }

@@ -11,7 +11,7 @@ type Repository interface {
 	FindByID(ID string) (Todo, error)
 	Save(todo Todo) (Todo, error)
 	Update(todo Todo) (Todo, error)
-	Delete(ID string) (bool, error)
+	Delete(ID string) (error, error)
 }
 
 type repository struct {
@@ -70,14 +70,14 @@ func (r *repository) Update(todo Todo) (Todo, error) {
 	return todo, nil
 }
 
-func (r *repository) Delete(ID string) (bool, error) {
+func (r *repository) Delete(ID string) (error, error) {
 	var todo Todo
 
 	err := r.db.Delete(&todo, "id = ?", ID).Error
 
 	if err != nil {
-		return false, err
+		return err, err
 	}
 
-	return true, nil
+	return nil, nil
 }

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"learning/todo/helper"
 
-	"github.com/calasteo/uuid"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +12,7 @@ type Service interface {
 	FindByID(inputID GetTodoID) (Todo, error)
 	Save(todo Todo) (Todo, error)
 	Update(inputID GetTodoID, inputTodo Todo) (Todo, error)
-	Delete(inputID GetTodoID) (bool, error)
+	Delete(inputID GetTodoID) (error, error)
 }
 
 type service struct {
@@ -34,8 +33,6 @@ func (s *service) FindByID(inputID GetTodoID) (Todo, error) {
 }
 
 func (s *service) Save(todo Todo) (Todo, error) {
-	todo.ID = uuid.GenerateOrderedUUID()
-
 	return s.repository.Save(todo)
 }
 
@@ -56,15 +53,15 @@ func (s *service) Update(inputID GetTodoID, inputTodo Todo) (Todo, error) {
 	return s.repository.Update(todo)
 }
 
-func (s *service) Delete(inputID GetTodoID) (bool, error) {
+func (s *service) Delete(inputID GetTodoID) (error, error) {
 	todo, err := s.repository.FindByID(inputID.ID)
 
 	if err != nil {
-		return false, err
+		return err, err
 	}
 
 	if todo.ID != inputID.ID {
-		return false, errors.New("Salah ID")
+		return err, errors.New("Salah ID")
 	}
 
 	return s.repository.Delete(inputID.ID)

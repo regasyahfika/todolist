@@ -4,7 +4,6 @@ import (
 	"errors"
 	"learning/todo/helper"
 
-	"github.com/calasteo/uuid"
 	"github.com/gosimple/slug"
 	"gorm.io/gorm"
 )
@@ -14,7 +13,7 @@ type Service interface {
 	FindByID(inputID GetCategoryID) (Category, error)
 	Save(category Category) (Category, error)
 	Update(inputID GetCategoryID, inputCategory Category) (Category, error)
-	Delete(inputID GetCategoryID) (bool, error)
+	Delete(inputID GetCategoryID) (error, error)
 }
 
 type service struct {
@@ -52,20 +51,19 @@ func (s *service) Update(inputID GetCategoryID, inputCategory Category) (Categor
 }
 
 func (s *service) Save(category Category) (Category, error) {
-	category.ID = uuid.GenerateOrderedUUID()
 	category.Slug = slug.Make(category.Name)
 	return s.repo.Save(category)
 }
 
-func (s *service) Delete(inputID GetCategoryID) (bool, error) {
+func (s *service) Delete(inputID GetCategoryID) (error, error) {
 	category, err := s.repo.FindByID(inputID.ID)
 
 	if err != nil {
-		return false, err
+		return err, err
 	}
 
 	if category.ID != inputID.ID {
-		return false, errors.New("Salah ID")
+		return err, errors.New("Salah ID")
 	}
 
 	return s.repo.Delete(category.ID)
