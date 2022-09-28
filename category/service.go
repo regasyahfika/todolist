@@ -1,7 +1,6 @@
 package category
 
 import (
-	"errors"
 	"learning/todo/helper"
 
 	"github.com/gosimple/slug"
@@ -40,10 +39,6 @@ func (s *service) Update(inputID GetCategoryID, inputCategory Category) (Categor
 		return category, err
 	}
 
-	if category.ID != inputID.ID {
-		return category, errors.New("Salah ID")
-	}
-
 	category.Name = inputCategory.Name
 	category.Slug = slug.Make(inputCategory.Name)
 
@@ -60,10 +55,6 @@ func (s *service) Delete(inputID GetCategoryID) (error, error) {
 
 	if err != nil {
 		return err, err
-	}
-
-	if category.ID != inputID.ID {
-		return err, errors.New("Salah ID")
 	}
 
 	return s.repo.Delete(category.ID)

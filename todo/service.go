@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"errors"
 	"learning/todo/helper"
 
 	"gorm.io/gorm"
@@ -42,10 +41,6 @@ func (s *service) Update(inputID GetTodoID, inputTodo Todo) (Todo, error) {
 		return todo, err
 	}
 
-	if todo.ID != inputID.ID {
-		return todo, errors.New("Salah ID todo")
-	}
-
 	todo.Name = inputTodo.Name
 	todo.Description = inputTodo.Description
 	todo.CategoryID = inputTodo.CategoryID
@@ -60,9 +55,5 @@ func (s *service) Delete(inputID GetTodoID) (error, error) {
 		return err, err
 	}
 
-	if todo.ID != inputID.ID {
-		return err, errors.New("Salah ID")
-	}
-
-	return s.repository.Delete(inputID.ID)
+	return s.repository.Delete(todo.ID)
 }
